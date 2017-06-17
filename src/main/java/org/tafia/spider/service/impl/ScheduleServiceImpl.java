@@ -61,7 +61,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             return;
         }
         List<City> cities = getCitiesFromMetadata(metadata);
-        cities.stream().limit(1).forEach(dataUpdateService::update);
+        cities.forEach(dataUpdateService::update);
     }
 
     private List<City> getCitiesFromMetadata(String metadata) {
