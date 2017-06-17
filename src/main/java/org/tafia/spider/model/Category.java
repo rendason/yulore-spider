@@ -5,21 +5,11 @@ package org.tafia.spider.model;
  */
 public class Category extends Model {
 
-    private String cityId;
-
     private String name;
 
     private String parentId;
 
     private int hot;
-
-    public String getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(String cityId) {
-        this.cityId = cityId;
-    }
 
     public String getName() {
         return name;

@@ -7,23 +7,15 @@ import java.util.List;
  */
 public class Subject extends Model {
 
-    private String cityId;
-
     private String name;
 
     private String shortName;
 
+    private String logo;
+
     private List<Category> categories;
 
     private List<Telephone> telephones;
-
-    public String getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(String cityId) {
-        this.cityId = cityId;
-    }
 
     public String getName() {
         return name;
@@ -39,6 +31,14 @@ public class Subject extends Model {
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     public List<Category> getCategories() {

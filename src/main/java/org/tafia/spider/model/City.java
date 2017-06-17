@@ -17,6 +17,18 @@ public class City extends Model{
 
     private String fullPinyin;
 
+    private String packagee;
+
+    @Override
+    public String getCityId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setCityId(String cityId) {
+        super.setId(cityId);
+    }
+
     public String getName() {
         return name;
     }
@@ -63,5 +75,13 @@ public class City extends Model{
 
     public void setFullPinyin(String fullPinyin) {
         this.fullPinyin = fullPinyin;
+    }
+
+    public String getPackagee() {
+        return packagee;
+    }
+
+    public void setPackagee(String packagee) {
+        this.packagee = packagee;
     }
 }

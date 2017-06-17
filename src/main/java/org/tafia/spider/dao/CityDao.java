@@ -2,6 +2,8 @@ package org.tafia.spider.dao;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Select;
 import org.tafia.spider.model.City;
 
 /**
@@ -10,7 +12,10 @@ import org.tafia.spider.model.City;
 @Mapper
 public interface CityDao {
 
-    @Insert("INSERT INTO city (id, name, pid, area_code, hot, pinyin_short, pinyin_full, version) " +
-            "VALUES(#{id}, #{name}, #{parentId}, #{areaCode}, #{hot}, #{shortPinyin}, #{fullPinyin}, #{version})")
+    @Insert("INSERT IGNORE INTO city (id, name, pid, area_code, hot, package, pinyin_short, pinyin_full, version) " +
+            "VALUES(#{id}, #{name}, #{parentId}, #{areaCode}, #{hot}, #{packagee}, #{shortPinyin}, #{fullPinyin}, #{version})")
     void insert(City city);
+
+    @Select("SELECT MAX(version) FROM city WHERE id = #{cityId}")
+    Integer maxVersion(String cityId);
 }

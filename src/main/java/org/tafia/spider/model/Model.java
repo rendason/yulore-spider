@@ -7,6 +7,8 @@ public class Model {
 
     private String id;
 
+    private String cityId;
+
     private int version;
 
     public String getId() {
@@ -17,6 +19,14 @@ public class Model {
         this.id = id;
     }
 
+    public String getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(String cityId) {
+        this.cityId = cityId;
+    }
+
     public int getVersion() {
         return version;
     }
@@ -24,4 +34,5 @@ public class Model {
     public void setVersion(int version) {
         this.version = version;
     }
+
 }
