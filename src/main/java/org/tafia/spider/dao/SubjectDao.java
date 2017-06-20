@@ -1,10 +1,17 @@
 package org.tafia.spider.dao;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.jdbc.SQL;
 import org.tafia.spider.model.Subject;
 import org.tafia.spider.model.Telephone;
+
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * Created by Dason on 2017/6/17.
@@ -24,4 +31,20 @@ public interface SubjectDao {
 
     @Insert("INSERT INTO subject_telephone VALUES(#{id}, #{cityId}, #{subjectId}, #{number}, #{description}, #{type}, #{version})")
     void insertSubjectTelephone(Telephone telephone);
+
+    @InsertProvider(type = BatchInsertProvider.class, method = "telephone")
+    void insertSubjectTelephones(List<Telephone> telephone);
+
+    class BatchInsertProvider {
+
+        public String telephone(Map<String, Object> map) {
+            List<Telephone> list = (List<Telephone>) map.get("list");
+            StringBuilder stringBuilder = new StringBuilder("INSERT INTO subject_telephone VALUES");
+            MessageFormat messageFormat = new MessageFormat("(#'{'list[{0}].id}, #'{'list[{0}].cityId}, " +
+                    "#'{'list[{0}].subjectId}, #'{'list[{0}].number}, #'{'list[{0}].description}, #'{'list[{0}].type}, #'{'list[{0}].version}),");
+            IntStream.range(0, list.size()).forEach(i -> stringBuilder.append(messageFormat.format(new Object[]{i})));
+            return stringBuilder.substring(0, stringBuilder.length() - 1);
+        }
+
+    }
 }

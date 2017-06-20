@@ -15,6 +15,7 @@ import org.tafia.spider.dao.*;
 import org.tafia.spider.model.*;
 import org.tafia.spider.service.DataUpdateService;
 import org.tafia.spider.service.HttpDownloadService;
+import org.tafia.spider.util.Exceptions;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -53,45 +54,23 @@ public class DataUpdateServiceImpl implements DataUpdateService {
     @Autowired
     private SubjectDao subjectDao;
 
-    private Map<String, Boolean> updateStatusMap = new ConcurrentHashMap<>();
-
-    @Async
     @Transactional
     @Override
     public void update(City city) {
-        if (updateStatusMap.put(city.getName(), Boolean.TRUE) == Boolean.TRUE) return;
-        try {
-            doUpdate(city);
-        } finally {
-            updateStatusMap.put(city.getName(), Boolean.FALSE);
-        }
-    }
-
-    @Override
-    public Map<String, String> status() {
-        return updateStatusMap.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue() ? "正在更新" : "更新结束"));
-    }
-
-    private void doUpdate(City city) {
-        Integer version = cityDao.maxVersion(city.getId());
-        if (version != null && version >= city.getVersion()) return;
-        logger.info("Downloading data of special city : {}", JSON.toJSONString(city));
+        logger.info("Downloading data of special city : {}", city.getName());
         cityDao.insert(city);
-        File file;
-        if ((file = httpDownloadService.asFile(city.getPackagee())) == null
-                || (file = unzip(file)) == null) return;
-        File categoryFile = new File(file, String.format("c%s.json", city.getId()));
+        File zipFile = httpDownloadService.asFile(city.getPackagee());
+        File decompressDir = unzip(zipFile);
+        File categoryFile = new File(decompressDir, String.format("c%s.json", city.getId()));
         logger.info("Loading category file : " + categoryFile.getAbsolutePath());
         JSONObject content = JSON.parseObject(getText(categoryFile));
-        if (!"0".equals(content.getString("status"))) return;
         addAllCategories(city, content);
         addAllDistricts(city, content);
         addFrequentSearch(city, content);
-        File indexFile = new File(file, String.format("d%s_ic.dat", city.getId()));
+        File indexFile = new File(decompressDir, String.format("d%s_ic.dat", city.getId()));
         logger.info("Loading index file : " + indexFile.getAbsolutePath());
         List<DataIndex> dataIndices = getDataIndices(indexFile);
-        File dataFile = new File(file, String.format("d%s.dat", city.getId()));
+        File dataFile = new File(decompressDir, String.format("d%s.dat", city.getId()));
         logger.info("Loading data file : " + dataFile.getAbsolutePath());
         loadDataFromFile(city, dataFile, dataIndices);
         logger.info("Finished to update data of special city : {}", JSONObject.toJSONString(city));
@@ -146,8 +125,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
             while (reader.ready()) stringBuilder.append(reader.readLine()).append('\n');
             return stringBuilder.toString();
         } catch (IOException e) {
-            logger.warn("Exception throws on loading file", e);
-            return "{\"status\":\"-1\"}";
+            throw Exceptions.asUnchecked(e);
         }
     }
 

@@ -19,6 +19,8 @@ public class City extends Model{
 
     private String packagee;
 
+    private long timestamp;
+
     @Override
     public String getCityId() {
         return super.getId();
@@ -83,5 +85,13 @@ public class City extends Model{
 
     public void setPackagee(String packagee) {
         this.packagee = packagee;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

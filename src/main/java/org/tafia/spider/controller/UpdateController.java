@@ -17,9 +17,6 @@ public class UpdateController {
     @Autowired
     private ScheduleService scheduleService;
 
-    @Autowired
-    private DataUpdateService dataUpdateService;
-
     @RequestMapping("/manual")
     public ApiResponse manual() {
         scheduleService.refresh();
@@ -28,6 +25,6 @@ public class UpdateController {
 
     @RequestMapping("/status")
     public ApiResponse status() {
-        return ApiResponse.custom(0, "查询成功", dataUpdateService.status());
+        return ApiResponse.custom(0, "查询成功", scheduleService.status());
     }
 }

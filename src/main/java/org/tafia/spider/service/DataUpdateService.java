@@ -11,5 +11,4 @@ public interface DataUpdateService {
 
     void update(City city);
 
-    Map<String, String> status();
 }

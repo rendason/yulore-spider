@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.tafia.spider.service.HttpDownloadService;
+import org.tafia.spider.util.Exceptions;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -52,8 +53,7 @@ public class HttpDownloadServiceImpl implements HttpDownloadService {
             if (httpResponse.getStatusLine().getStatusCode() != 200) return null;
             return IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            logger.warn("Exception throws on http request", e);
-            return null;
+            throw Exceptions.asUnchecked(e);
         }
     }
 
@@ -76,8 +76,7 @@ public class HttpDownloadServiceImpl implements HttpDownloadService {
             }
             return file;
         } catch (IOException e) {
-            logger.warn("I/O exception occurs", e);
-            return null;
+            throw Exceptions.asUnchecked(e);
         }
     }
 
