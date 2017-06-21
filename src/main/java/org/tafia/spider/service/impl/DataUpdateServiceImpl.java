@@ -73,7 +73,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
         File dataFile = new File(decompressDir, String.format("d%s.dat", city.getId()));
         logger.info("Loading data file : " + dataFile.getAbsolutePath());
         loadDataFromFile(city, dataFile, dataIndices);
-        logger.info("Finished to update data of special city : {}", JSONObject.toJSONString(city));
+        logger.info("Finished to update data of special city : {}", city.getName());
     }
 
     private File unzip(File file) {
