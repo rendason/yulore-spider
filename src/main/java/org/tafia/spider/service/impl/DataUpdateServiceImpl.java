@@ -105,7 +105,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
             return path;
         } catch (Exception e) {
             logger.warn("Exception throws on decompressing", e);
-            return null;
+            throw Exceptions.asUnchecked(e);
         }
     }
 
@@ -200,7 +200,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
             byte[] buffer = new byte[length];
             randomAccessFile.seek(offset);
             int len = randomAccessFile.read(buffer, 0, length);
-            if (len == -1) throw new EOFException("Reached EOF");
+            if (len != length) throw new EOFException("Reached EOF");
             byte[] bytes = decode(buffer, len, 8);
             return decompress(bytes);
         } catch (IOException e) {
@@ -321,13 +321,6 @@ public class DataUpdateServiceImpl implements DataUpdateService {
         return length;
     }
 
-    private static byte[] fit(byte[] bytes, int size) {
-        if (size == bytes.length) return bytes;
-        byte[] result = new byte[size];
-        System.arraycopy(bytes, 0, result, 0, size);
-        return result;
-    }
-
     private static byte[] decode(byte[] bytes, int arrayLength, int maskLength) {
         final byte[] mask = {31, -117, 8, 0, 0, 0, 0, 0, 0, 3};
         byte[] result = new byte[arrayLength + maskLength];
@@ -337,8 +330,8 @@ public class DataUpdateServiceImpl implements DataUpdateService {
     }
 
     private static String decompress(byte[] bytes) throws IOException {
-        try (InputStream headerInputStream = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-            return IOUtils.toString(headerInputStream, StandardCharsets.UTF_8);
+        try (InputStream inputStream = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         }
     }
 

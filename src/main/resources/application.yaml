@@ -2,12 +2,12 @@ spring :
   datasource :
     type : com.alibaba.druid.pool.DruidDataSource
     driver-class-name : com.mysql.jdbc.Driver
-#    url : jdbc:mysql://localhost:3306/yulore?characterEncoding=utf8&useSSL=true
-#    username : root
-#    password : root
-    url : jdbc:mysql://bdm2682759.my3w.com:3306/bdm2682759_db?characterEncoding=utf8&useSSL=true
-    username : bdm2682759
-    password : 12345678
+    url : jdbc:mysql://localhost:3306/yulore?characterEncoding=utf8&useSSL=true
+    username : root
+    password : root
+#    url : jdbc:mysql://bdm2682759.my3w.com:3306/bdm2682759_db?characterEncoding=utf8&useSSL=true
+#    username : bdm2682759
+#    password : 12345678
     initialSize : 5
     minIdle : 5
     maxActive : 20
