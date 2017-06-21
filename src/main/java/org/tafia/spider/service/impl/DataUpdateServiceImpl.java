@@ -176,7 +176,6 @@ public class DataUpdateServiceImpl implements DataUpdateService {
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(dataFile, "r")) {
             dataIndices.stream()
                     .map(dataIndex -> getDataString(randomAccessFile, dataIndex.offset, dataIndex.length))
-                    .filter(json -> !"{}".equals(json))
                     .map(JSON::parseObject)
                     .map(this::subjectMapper)
                     .peek(setCityInfo(city))
@@ -192,6 +191,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
                     });
         } catch (IOException e) {
             logger.warn("Exception throws on loading data file : " + dataFile.getAbsolutePath(), e);
+            throw Exceptions.asUnchecked(e);
         }
     }
 
@@ -205,7 +205,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
             return decompress(bytes);
         } catch (IOException e) {
             logger.info("Exception throws on read data file.", e);
-            return "{}";
+            throw Exceptions.asUnchecked(e);
         }
     }
 
@@ -284,7 +284,7 @@ public class DataUpdateServiceImpl implements DataUpdateService {
             }
         } catch (IOException e) {
             logger.warn("Exception throws on reading index file : " + indexFile, e);
-            return Collections.emptyList();
+            throw Exceptions.asUnchecked(e);
         }
     }
 
@@ -306,11 +306,9 @@ public class DataUpdateServiceImpl implements DataUpdateService {
                 dataIndices.add(new DataIndex(jsonArray.getIntValue(i), jsonArray.getIntValue(i + 1)));
             }
             return dataIndices;
-        } catch (EOFException ignore) {
-            return Collections.emptyList();
         } catch (IOException e) {
             logger.warn("Exception throws on reading index file", e);
-            return Collections.emptyList();
+            throw Exceptions.asUnchecked(e);
         }
     }
 
